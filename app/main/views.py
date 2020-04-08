@@ -2,6 +2,7 @@
 # 导入蓝图程序，用于构建路由
 import datetime
 import os
+import re
 
 from . import main
 # 导入db，用于操作数据库
@@ -134,7 +135,32 @@ def release():
             return render_template('release.html', params=locals())
     # 处理发表博客提交
     elif request.method == 'POST':
-        return '提交成功'
+        topic = Topic()
+        topic.title = request.form.get('author')
+        topic.blogtype_id = request.form.get('list')
+        topic.category_id = request.form.get('category')
+        topic.user_id = session.get('uid')
+        topic.content = request.form.get('content')
+        topic.pub_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print("%s,%s,%s,%s,%s,%s" % (
+        topic.title, topic.blogtype_id, topic.category_id, topic.user_id, topic.content, topic.pub_date))
+
+        topic.images = request.form.get('imgList')
+        # 正则匹配出文档内容的图片链接，不一致者，则删除服务已经存在的图片
+        patter = r'src="(/static/upload/\d+.\S+)"'
+        # reallist真实有引用到的图片列表
+        reallist = re.findall(patter ,topic.content)
+        # imgL前端上传到服务器的图片列表
+        imgList = topic.images.split(',')
+        print('reallist:')
+        print('imgList:')
+        basedir = os.path.dirname(os.path.dirname(__file__))
+        for img in imgList:
+            if img not in reallist and os.path.exists(basedir+img):
+                os.remove(basedir+img)
+                print('删除%s成功' % basedir+img)
+        db.session.add(topic)
+        return redirect('/')
 
 
 @main.route('/upload', methods=['GET', 'POST'])
@@ -158,10 +184,12 @@ def upload():
             print(upload_path)
             f.save(upload_path)
 
-            resp = {
-                "errno": 0,
-                "data": [
-                    file_path
-                ]
-            }
+            # resp = {
+            #     "errno": 0,
+            #     "data": [
+            #         file_path
+            #     ]
+            # }
+
+            resp = {'url': file_path}
             return json.dumps(resp)
