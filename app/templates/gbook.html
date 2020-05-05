@@ -5,70 +5,75 @@
 	<meta charset="utf-8">
 	<title>首页_皮爷の博客</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href="images/bitbug_favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="css/comments.css">
-	<link href="css/base.css" rel="stylesheet">
-	<link href="css/index.css" rel="stylesheet">
-	<link href="css/m.css" rel="stylesheet">
-	<script src="js/jquery.min.js" type="text/javascript"></script>
-	<script src="js/jquery.easyfader.min.js"></script>
-	<script src="js/scrollReveal.js"></script>
-	<script src="js/wangEditor.js"></script>
-	<script src="js/common.js"></script>
-	<script src="js/xcConfirm.js"></script>
+	<link rel="shortcut icon" href="/static/images/bitbug_favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="/static/css/comments.css">
+	<link href="/static/css/base.css" rel="stylesheet">
+	<link href="/static/css/index.css" rel="stylesheet">
+	<link href="/static/css/m.css" rel="stylesheet">
+	<script src="/static/js/jquery.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery.easyfader.min.js"></script>
+	<script src="/static/js/scrollReveal.js"></script>
+	<script src="/static/js/wangEditor.js"></script>
+	<script src="/static/js/common.js"></script>
+	<script src="/static/js/xcConfirm.js"></script>
 </head>
 
 <body style="position:relative">
 
-	<header id="header">
-		<!--menu begin-->
-		<div class="menu">
-			<nav class="nav" id="topnav">
-				<h1 class="logo"><a href="index.html">皮爷の博客</a></h1>
-				<li><a href="index.html">网站首页</a> </li>
-				<li><a href="list.html">文章列表</a>
-					<ul class="sub-nav">
-						<li><a href="list.html">Python</a></li>
-						<li><a href="list.html">python Web</a></li>
-						<li><a href="list.html">爬虫</a></li>
-						<li><a href="list.html">人工智能</a></li>
-						<li><a href="list.html">JS实例索引</a></li>
-					</ul>
-				</li>
-				<li><a href="photo.html">我的相册</a>
-				</li>
-				<li><a href="time.html">时间轴</a> </li>
-				<li><a href="gbook.html">留言</a> </li>
-				<li><a href="about.html">关于我</a> </li>
-				<li><a href="release.html">发表博客</a></li>
-			</nav>
-		</div>
-		<!--menu end-->
-		<a href="login.html" id="login" target="_blank">登录</a>
-   		<a href="register.html" id="register" target="_blank">注册</a>
-		<!--mnav begin-->
-		<div id="mnav">
-			<h2><a href="index.html" class="mlogo">皮爷の博客</a><span class="navicon"></span></h2>
-			<dl class="list_dl">
-				<dt class="list_dt"> <a href="index.html">网站首页</a> </dt>
-				<dt class="list_dt"> <a href="#">文章列表</a> </dt>
-				<dd class="list_dd">
-					<ul>
-						<li><a href="list.html">Python</a></li>
-						<li><a href="list.html">python Web</a></li>
-						<li><a href="list.html">爬虫</a></li>
-						<li><a href="list.html">人工智能</a></li>
-						<li><a href="list.html">JS实例索引</a></li>
-					</ul>
-				</dd>
-				<dt class="list_dt"> <a href="photo.html">我的相册</a> </dt>
-				<dt class="list_dt"> <a href="time.html">时间轴</a> </dt>
-				<dt class="list_dt"> <a href="gbook.html">留言</a> </dt>
-				<dt class="list_dt"> <a href="about.html">关于我</a> </dt>
-			</dl>
-		</div>
-		<!--mnav end-->
-	</header>
+<header id="header">
+    <!--menu begin-->
+    <div class="menu">
+        <nav class="nav" id="topnav">
+            <h1 class="logo"><a href="index.html">个人博客</a></h1>
+            <li><a href="/">网站首页</a> </li>
+            <li><a href="/list">文章列表</a>
+                <ul class="sub-nav">
+                    {% for category in params.categories %}
+                    <li><a href="/list?cate_id={{ category.id }}">{{ category.cate_name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li><a href="/photo">我的相册</a>
+            </li>
+            <li><a href="/time">时间轴</a> </li>
+            <li><a href="/gbook">留言</a> </li>
+            <li><a href="/about">关于我</a> </li>
+            <li><a href="/release">发表博客</a></li>
+        </nav>
+    </div>
+    {% if not params.user %}
+        <a href="/login" class="login">登录</a>
+        <a href="/register" class="register">注册</a>
+    {% else %}
+        <a class="login">欢迎：{{ params.user.uname }}</a>
+        <a href="/logout" class="register">注销</a>
+    {% endif %}
+    <!--menu end-->
+    <!--mnav begin-->
+    <div id="mnav">
+        <h2><a href="index.html" class="mlogo">个人博客</a><span class="navicon"></span></h2>
+        <dl class="list_dl">
+            <dt class="list_dt"> <a href="index.html">网站首页</a> </dt>
+            <dt class="list_dt"> <a href="#">文章列表</a> </dt>
+            <dd class="list_dd">
+                <ul>
+                    <li><a href="list.html">Python</a></li>
+                    <li><a href="list.html">python Web</a></li>
+                    <li><a href="list.html">爬虫</a></li>
+                    <li><a href="list.html">人工智能</a></li>
+                    <li><a href="list.html">JS实例索引</a></li>
+                </ul>
+            </dd>
+            <dt class="list_dt"> <a href="photo.html">我的相册</a> </dt>
+            <dt class="list_dt"> <a href="time.html">时间轴</a> </dt>
+            <dt class="list_dt"> <a href="gbook.html">留言</a> </dt>
+            <dt class="list_dt"> <a href="about.html">关于我</a> </dt>
+        </dl>
+    </div>
+    <!--mnav end-->
+
+
+</header>
 	<div class="pagebg sh"></div>
 	<article style="margin-top:20px;">
 		<div class="container ">
@@ -101,7 +106,7 @@
 								</span>
 							</div>
 							<div>
-								<img alt='' src='images/02.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' />
+								<img alt='' src='/static/images/02.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' />
 							</div>
 							<div class="body">
 								<p>写的很好，长得很帅</p>
@@ -116,7 +121,7 @@
 										@ <a href="#" title="">2018-09-10 9:38</a>
 									</span>
 								</div>
-								<div><img alt="" src="images/01.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
+								<div><img alt="" src="/static/images/01.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
 								<div class="body">楼上说的对</div>
 							</div>
 						</li>
@@ -126,7 +131,7 @@
 						<li>
 							<div class="top"><a href='#'  class='url'>qudaodao</a><span class="time"> @
 									<a href="#" title="">2018-09-10 9:38</a><a href="#" class="replyComment">回复</a></span></div>
-							<div><img alt='' src='images/01.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' /></div>
+							<div><img alt='' src='/static/images/01.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' /></div>
 							<div class="body">
 								<p>真知灼见</p>
 							</div>
@@ -136,7 +141,7 @@
 							<div class="reply">
 								<div class="top"><a href="#" class="url">pipilu</a><span class="time">
 										@ <a href="#" title="">2018-09-10 9:38</a></span></div>
-								<div><img alt="" src="images/02.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
+								<div><img alt="" src="/static/images/02.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
 								<div class="body">楼上说的对</div>
 							</div>
 						</li>
@@ -148,7 +153,7 @@
 										@ <a href="#" title="">2018-09-10 9:38</a>
 									</span>
 								</div>
-								<div><img alt="" src="images/03.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
+								<div><img alt="" src="/static/images/03.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
 								<div class="body">楼上说的对</div>
 							</div>
 						</li>
@@ -157,7 +162,7 @@
 						<li>
 							<div class="top"><a href='#' rel='external nofollow' class='url'>qudaodao</a><span class="time"> @
 									<a href="#" title="">2018-09-10 9:38</a><a href="#" class="replyComment">回复</a></span></div>
-							<div><img alt='' src='images/04.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' /></div>
+							<div><img alt='' src='/static/images/04.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' /></div>
 							<div class="body">
 								<p>没毛病老铁</p>
 							</div>
@@ -167,7 +172,7 @@
 							<div class="reply">
 								<div class="top"><a href="#" class="url">pipilu</a><span class="time">
 										@ <a href="#" title="">2018-09-10 9:38</a></span></div>
-								<div><img alt="" src="images/05.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
+								<div><img alt="" src="/static/images/05.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
 								<div class="body">楼上说的对</div>
 							</div>
 						</li>
@@ -190,23 +195,23 @@
 				<div class="tuijian">
 					<h2 class="hometitle">推荐文章</h2>
 					<ul class="tjpic">
-					  <i><img src="images/toppic01.jpg"></i>
+					  <i><img src="/static/images/toppic01.jpg"></i>
 					  <p><a href="#">python中打开TXT文件报错</a></p>
 					</ul>
 					<ul class="sidenews">
-					  <li> <i><img src="images/toppic01.jpg"></i>
+					  <li> <i><img src="/static/images/toppic01.jpg"></i>
 						<p><a href="#">python学习网址以及笔记</a></p>
 						<span>2018-05-13</span>
 					  </li>
-					  <li> <i><img src="images/toppic02.jpg"></i>
+					  <li> <i><img src="/static/images/toppic02.jpg"></i>
 						<p><a href="#">CentOS7下python开发环境配置</a></p>
 						<span>2018-05-13</span>
 					  </li>
-					  <li> <i><img src="images/v1.jpg"></i>
+					  <li> <i><img src="/static/images/v1.jpg"></i>
 						<p><a href="#">python初步实现word2vec</a></p>
 						<span>2018-05-13</span>
 					  </li>
-					  <li> <i><img src="images/v2.jpg"></i>
+					  <li> <i><img src="/static/images/v2.jpg"></i>
 						<p><a href="#">Python之if判断语句与while和for循环</a></p>
 						<span>2018-05-13</span>
 					  </li>

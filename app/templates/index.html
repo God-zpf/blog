@@ -21,7 +21,7 @@
     <div class="menu">
         <nav class="nav" id="topnav">
             <h1 class="logo"><a href="index.html">个人博客</a></h1>
-            <li><a href="/index">网站首页</a> </li>
+            <li><a href="/">网站首页</a> </li>
             <li><a href="/list">文章列表</a>
                 <ul class="sub-nav">
                     {% for category in params.categories %}
@@ -129,7 +129,7 @@
                     </a>
                 </span>
                 {% endif %}
-                <p class="blogtext">{{ topic.content }}</p>
+{#                <p class="blogtext">{{ topic.content }}</p>#}
                 <div class="bloginfo">
                     <ul>
                         <li class="author"><a href="info.html">{{ topic.user.uname }}</a></li>

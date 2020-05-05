@@ -11,6 +11,7 @@ pymysql.install_as_MySQLdb()
 db = SQLAlchemy()
 
 
+
 def create_app():
     app = Flask(__name__)
     # 配置启动模式为调试模式

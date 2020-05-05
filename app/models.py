@@ -43,6 +43,8 @@ class User(db.Model):
     topics = db.relationship('Topic', backref='user', lazy='dynamic')
     # 增加与Reply之间的关联关系和反向引用
     replies = db.relationship('Reply', backref='user', lazy='dynamic')
+    # 增加与ChildReply之间的关联关系和反向引用
+    childreplies = db.relationship('ChildReply', backref='user', lazy='dynamic')
 
     def __init__(self, loginname, uname, upwd, email, url):
         self.loginname = loginname
@@ -71,7 +73,7 @@ class Topic(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     # 增加与Reply之间的联系和反向引用
     replies = db.relationship('Reply', backref='topic', lazy='dynamic')
-    # 增加与Topic之间的联系和反向引用(多对多)
+    # 增加与Voke之间的联系和反向引用(多对多)
     voke_topics = db.relationship(
         'Topic',
         secondary='voke',
@@ -89,6 +91,18 @@ class Reply(db.Model):
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'))
     # 关系：一(User)对多(Reply)的关系
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # 增加与ChildReply的关联关系和反向引用
+    childreplies = db.relationship('ChildReply', backref='reply', lazy='dynamic')
+
+class ChildReply(db.Model):
+    __tablename__ = 'childreply'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    reply_time = db.Column(db.DateTime, nullable=False)
+    # 关系：一(Reply)对多(ChildReply)的关系
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'))
+    # 关系：一(User)对多(ChildReply)的关系
+    cuser_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
 
 Voke = db.Table(
@@ -97,3 +111,4 @@ Voke = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('topic_id', db.Integer, db.ForeignKey('topic.id'))
 )
+

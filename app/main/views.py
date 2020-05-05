@@ -4,6 +4,8 @@ import datetime
 import os
 import re
 
+from sqlalchemy import text
+
 from . import main
 # 导入db，用于操作数据库
 from app import db
@@ -95,7 +97,7 @@ def logout():
         del session['uname']
         return redirect('/')
     else:
-        return redirect('/index')
+        return redirect('/')
 
 
 # 异步ajax验证注册按钮
@@ -159,6 +161,7 @@ def release():
             if img not in reallist and os.path.exists(basedir+img):
                 os.remove(basedir+img)
                 print('删除%s成功' % basedir+img)
+        topic.images = ';'.join(reallist).replace('/static/','')
         db.session.add(topic)
         return redirect('/')
 
@@ -193,3 +196,119 @@ def upload():
 
             resp = {'url': file_path}
             return json.dumps(resp)
+
+
+# 详情info界面
+@main.route('/info', methods=['GET','POST'])
+def info():
+    if request.method == 'GET':
+        # 查询所有categories的信息
+        categories = Category.query.all()
+        # 获取博客信息
+        topic_id = request.args.get('topic_id')
+        topic = Topic.query.filter(Topic.id == topic_id).first()
+        # 点击后阅读量加1
+        topic.read_num = int(topic.read_num) + 1
+        # 上一篇：小于topic_id的最后一条记录
+        prevTopic = Topic.query.filter(Topic.id < topic_id).order_by(text("id desc")).first()
+        # print('上一篇：', prevTopic.title)
+        # 下一篇：大于topic_id的第一条记录
+        nextTopic = Topic.query.filter(Topic.id > topic_id).first()
+        # print('下一篇：', nextTopic.title)
+        # 获取登录信息
+        if 'uid' in session and 'uname' in session:
+            user = User.query.filter(User.id == session['uid']).first()
+        db.session.add(topic)
+
+        return render_template('info.html', params=locals())
+
+    elif request.method == 'POST':
+        # 提交评论
+        reply = Reply()
+        referer = request.headers.get('referer', '/')
+        reply.topic_id = request.form.get('topic_id')
+
+        reply.content = request.form.get('content')
+        if 'uid' in session and 'uname' in session:
+            reply.user_id = User.query.filter(User.id == session['uid']).first().id
+        reply.reply_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print('%s,%s,%s,%s' % (reply.topic_id, reply.content, reply.user_id, reply.reply_time))
+        db.session.add(reply)
+        return redirect(referer)
+
+# 异步获取详情博客内容
+@main.route('/topic')
+def topic():
+    topic_id = request.args.get('topic_id')
+    print('topic_id',topic_id)
+    topic = Topic.query.filter(Topic.id == topic_id).first()
+    content = topic.content
+    if content:
+        data = {
+            "code": 0,
+            "content": content
+        }
+    else:
+        data = {
+            "code": 1,
+            "content": '出错了'
+        }
+    return json.dumps(data)
+
+# 子评论接口
+@main.route('/creply', methods=['GET', 'POST'])
+def creply():
+
+    creply = ChildReply()
+    creply.reply_id = request.form.get('freply_id')
+    if 'uid' in session and 'uname' in session:
+        creply.cuser_id = session['uid']
+    creply.reply_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    creply.content = request.form.get('content')
+    print('%s,%s,%s,%s' % (creply.reply_id, creply.cuser_id, creply.reply_time, creply.content))
+    db.session.add(creply)
+    data = {
+        "code": 0,
+        "msg": '成功'
+    }
+
+    return json.dumps(data)
+
+# 留言
+@main.route('/gbook')
+def gbook():
+    categories = Category.query.all()
+    return render_template('gbook.html', params=locals())
+
+# 时间轴
+@main.route('/time')
+def time():
+    categories = Category.query.all()
+    if 'uid' in session and 'uname' in session:
+        user = User.query.filter(User.id == session['uid']).first()
+        topics = Topic.query.filter(Topic.user_id == session['uid']).all()
+    return render_template('time.html', params=locals())
+
+# 列表
+@main.route('/list')
+def list():
+    categories = Category.query.all()
+    cate_id = request.args.get('cate_id')
+    topics = Topic.query.filter(Topic.category_id == cate_id).all()
+    if 'uid' in session and 'uname' in session:
+        user = User.query.filter(User.id == session['uid']).first()
+    return render_template('list.html', params=locals())
+
+# 相册
+@main.route('/photo')
+def photo():
+    categories = Category.query.all()
+    if 'uid' in session and 'uname' in session:
+        user = User.query.filter(User.id == session['uid']).first()
+    return render_template('photo.html', params=locals())
+
+# 关于我
+@main.route('/about')
+def about():
+    categories = Category.query.all()
+    return render_template('about.html', params=locals())

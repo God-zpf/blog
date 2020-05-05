@@ -10,10 +10,32 @@ $(document).ready(function () {
     for (var i of list) {
         i.addEventListener("click", function (ev) {
             ev.preventDefault();
+            console.log(this);
+            var freply_id = this.getAttribute('name');
+            console.log('freply_id', freply_id);
             var txt=  "请输入回复：";
             window.wxc.xcConfirm(txt, window.wxc.xcConfirm.typeEnum.input,{
                 onOk:function(reply){
                     console.log(reply);
+
+                    // var freply_id = this.getAttribute('name');
+                    // console.log('freply_id', freply_id);
+                    if (reply){
+                        //异步放送评论请求
+
+                        $.ajax({
+                            url: '/creply',
+                            type: 'post',
+                            data: {
+                                "freply_id": freply_id,
+                                "content": reply,
+                            },
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log(data.msg);
+                            }
+                        })
+                    }
                 }
             });
         }, false);
