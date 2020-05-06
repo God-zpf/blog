@@ -74,10 +74,10 @@ class Topic(db.Model):
     # 增加与Reply之间的联系和反向引用
     replies = db.relationship('Reply', backref='topic', lazy='dynamic')
     # 增加与Voke之间的联系和反向引用(多对多)
-    voke_topics = db.relationship(
-        'Topic',
+    voke_users = db.relationship(
+        'User',
         secondary='voke',
-        backref=db.backref('voke_users', lazy='dynamic'),
+        backref=db.backref('voke_topics', lazy='dynamic'),
         lazy='dynamic'
     )
 

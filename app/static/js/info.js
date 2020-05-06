@@ -11,6 +11,19 @@ $(function() {
             console.log(data);
             $('.news_con').html(data.content)
             }
+    });
+    $('.voke').click(function () {
+        console.log('点赞')
+        $.ajax({
+            url: '/voke',
+            type: 'post',
+            data: args,
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $('#diggnum').text(data.num);
+            }
+        })
     })
 
 })

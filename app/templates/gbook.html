@@ -93,94 +93,48 @@
 						Address: <a href="#" rel="bookmark" title="住在手机里的朋友">18837636</a>
 					</div>
 					<div class="commentstitle">
-						<h3 id="comments">到现在<span class="commentsnumber">有30条留言</span></h3>
+						<h3 id="comments">到现在<span class="commentsnumber">有{{ params.replies | length }}条留言</span></h3>
 					</div>
+                    {% for reply in params.replies %}
 					<ol class="commentlist">
 						<!--先遍历父级评论-->
 						<li>
 							<div class="top">
-								<a href='#' class='url'>qudaodao</a>
+								<a href='#' class='url'>{{ reply.user.uname }}</a>
 								<span class="time"> @
-									<a href="#" title="">2018-09-10 9:38</a>
-									<a href="#" class="replyComment">回复</a>
+									<a href="#" title="">{{ reply.reply_time }}</a>
+									<a href="#" name={{ reply.id }} class="replyComment">回复</a>
 								</span>
 							</div>
-							<div>
-								<img alt='' src='/static/images/02.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' />
+                            <div>
+								文章：<a href="/info?topic_id={{ reply.topic.id }}">{{ reply.topic.title }}</a>
 							</div>
 							<div class="body">
-								<p>写的很好，长得很帅</p>
+								<p>{{ reply.content }}</p>
 							</div>
 						</li>
 						<!--如果父级评论有子评论，就把子评论输出-->
+                         {% for childreply in reply.childreplies %}
 						<li>
 							<div class="reply">
 								<div class="top">
-									<a href="#"  class="url">pipilu</a>
+									<a href="#"  class="url">{{ childreply.user.uname }}</a>
 									<span class="time">
-										@ <a href="#" title="">2018-09-10 9:38</a>
+										@ <a href="#" title="">{{ childreply.reply_time }}</a>
 									</span>
 								</div>
-								<div><img alt="" src="/static/images/01.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
-								<div class="body">楼上说的对</div>
+
+								<div class="body">{{ childreply.content }}</div>
 							</div>
 						</li>
+                             {% endfor %}
 					</ol>
-					<ol class="commentlist">
-						<!--先遍历父级评论-->
-						<li>
-							<div class="top"><a href='#'  class='url'>qudaodao</a><span class="time"> @
-									<a href="#" title="">2018-09-10 9:38</a><a href="#" class="replyComment">回复</a></span></div>
-							<div><img alt='' src='/static/images/01.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' /></div>
-							<div class="body">
-								<p>真知灼见</p>
-							</div>
-						</li>
-						<!--如果父级评论有子评论，就把子评论输出-->
-						<li >
-							<div class="reply">
-								<div class="top"><a href="#" class="url">pipilu</a><span class="time">
-										@ <a href="#" title="">2018-09-10 9:38</a></span></div>
-								<div><img alt="" src="/static/images/02.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
-								<div class="body">楼上说的对</div>
-							</div>
-						</li>
-						<li >
-							<div class="reply">
-								<div class="top">
-									<a href="#" class="url">pipilu</a>
-									<span class="time">
-										@ <a href="#" title="">2018-09-10 9:38</a>
-									</span>
-								</div>
-								<div><img alt="" src="/static/images/03.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
-								<div class="body">楼上说的对</div>
-							</div>
-						</li>
-					</ol>
-					<ol class="commentlist">
-						<li>
-							<div class="top"><a href='#' rel='external nofollow' class='url'>qudaodao</a><span class="time"> @
-									<a href="#" title="">2018-09-10 9:38</a><a href="#" class="replyComment">回复</a></span></div>
-							<div><img alt='' src='/static/images/04.jpg' class='commentAvatar avatar-32 commentPhoto' height='32' width='32' /></div>
-							<div class="body">
-								<p>没毛病老铁</p>
-							</div>
-						</li>
-						<!--如果父级评论有子评论，就把子评论输出-->
-						<li >
-							<div class="reply">
-								<div class="top"><a href="#" class="url">pipilu</a><span class="time">
-										@ <a href="#" title="">2018-09-10 9:38</a></span></div>
-								<div><img alt="" src="/static/images/05.jpg" class="commentAvatar avatar-32 commentPhoto" height="32" width="32"></div>
-								<div class="body">楼上说的对</div>
-							</div>
-						</li>
-					</ol>
+                    {% endfor %}
+
 					<div id="commentform">
 						<h3 id="respond">在这添加你的留言！</h3>
 						<form action="#" method="post">
-						<dir id="editor"></dir>
+						<div id="editor"></div>
 						<br>
 						<p>
 							<input id="id_article" name="article" type="hidden" value="1">

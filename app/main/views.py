@@ -157,11 +157,12 @@ def release():
         print('reallist:')
         print('imgList:')
         basedir = os.path.dirname(os.path.dirname(__file__))
-        for img in imgList:
-            if img not in reallist and os.path.exists(basedir+img):
-                os.remove(basedir+img)
-                print('删除%s成功' % basedir+img)
-        topic.images = ';'.join(reallist).replace('/static/','')
+        if reallist:
+            for img in imgList:
+                if img not in reallist and os.path.exists(basedir+img):
+                    os.remove(basedir+img)
+                    print('删除%s成功' % basedir+img)
+            topic.images = ';'.join(reallist).replace('/static/','')
         db.session.add(topic)
         return redirect('/')
 
@@ -240,7 +241,7 @@ def info():
 @main.route('/topic')
 def topic():
     topic_id = request.args.get('topic_id')
-    print('topic_id',topic_id)
+    print('topic_id', topic_id)
     topic = Topic.query.filter(Topic.id == topic_id).first()
     content = topic.content
     if content:
@@ -274,10 +275,52 @@ def creply():
 
     return json.dumps(data)
 
+# ajax点赞接口
+@main.route('/voke', methods=['GET','POST'])
+def voke():
+    topic_id = request.form.get('topic_id')
+    if 'uid' in session and 'uname' in session:
+        user_id = session['uid']
+    print('topic_id', topic_id)
+    print('user_id', user_id)
+    # 查找出点赞的用户
+    user = User.query.filter(User.id == user_id).first()
+    # 查找出被点赞的文章
+    topic = Topic.query.filter(Topic.id == topic_id).first()
+
+
+
+    try:
+        if user in topic.voke_users.all():
+            user.voke_topics.remove(topic)
+
+        else:
+            user.voke_topics.append(topic)
+
+    except Exception as e:
+        print('错误：', e)
+        data = {
+            "code": 1,
+            "msg": "失败"
+        }
+    else:
+        num = len(topic.voke_users.all())
+        data = {
+            "code": 0,
+            "msg": "成功",
+            "num": num
+        }
+    return json.dumps(data)
+
 # 留言
 @main.route('/gbook')
 def gbook():
     categories = Category.query.all()
+    if 'uid' in session and 'uname' in session:
+        user = User.query.filter(User.id == session['uid']).first()
+    replies = Reply.query.all()
+    print('replies',replies)
+
     return render_template('gbook.html', params=locals())
 
 # 时间轴
