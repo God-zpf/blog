@@ -348,6 +348,8 @@ def photo():
     categories = Category.query.all()
     if 'uid' in session and 'uname' in session:
         user = User.query.filter(User.id == session['uid']).first()
+    topics = Topic.query.filter(Topic.images != "").all()
+    print('topics', topics)
     return render_template('photo.html', params=locals())
 
 # 关于我
