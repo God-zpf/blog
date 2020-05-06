@@ -65,6 +65,9 @@ class Topic(db.Model):
     read_num = db.Column(db.Integer, default=0)
     content = db.Column(db.Text, nullable=False)
     images = db.Column(db.Text)
+    is_banner = db.Column(db.Integer, default=0)
+    is_super_recommend = db.Column(db.Integer, default=0)
+    is_recommend = db.Column(db.Integer, default=0)
     # 关系：一(Blogtype)对多(Topic)的关系
     blogtype_id = db.Column(db.Integer, db.ForeignKey('blogtype.id'))
     # 关系：一(Category)对多(Topic)的关系

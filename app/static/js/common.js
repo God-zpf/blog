@@ -21,7 +21,7 @@ $(document).ready(function () {
                     // var freply_id = this.getAttribute('name');
                     // console.log('freply_id', freply_id);
                     if (reply){
-                        //异步放送评论请求
+                        //ajax发送评论请求
 
                         $.ajax({
                             url: '/creply',

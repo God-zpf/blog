@@ -25,6 +25,14 @@ def index():
     categories = Category.query.all()
     # 查询所有Topic的信息
     topics = Topic.query.all()
+    # 查询5条banner的topic信息
+    banner_topics = Topic.query.filter(Topic.is_banner == 1).all()
+    # 查询特别推荐topic的信息
+    super_recommend_topics = Topic.query.filter(Topic.is_super_recommend == 1).all()
+    # 查询推荐文章topic的信息
+    recommend_topics = Topic.query.filter(Topic.is_recommend == 1).all()
+    # 查询前5条点击排行的topic信息
+    rank_topics = Topic.query.order_by(text('read_num desc')).limit(5).all()
     # 获取登陆信息
     if 'uid' in session and 'uname' in session:
         user = User.query.filter(User.id == session['uid']).first()
@@ -318,8 +326,15 @@ def gbook():
     categories = Category.query.all()
     if 'uid' in session and 'uname' in session:
         user = User.query.filter(User.id == session['uid']).first()
-    replies = Reply.query.all()
-    print('replies',replies)
+    topics = Topic.query.filter(Topic.user_id == session['uid']).all()
+    reply_num = 0
+    for topic in topics:
+        for reply in topic.replies.all():
+            if reply.topic.user_id == user.id:
+                reply_num = reply_num + 1
+    print('reply_num', reply_num)
+    # replies = Reply.query.all()
+    # print('replies',replies)
 
     return render_template('gbook.html', params=locals())
 
@@ -329,7 +344,7 @@ def time():
     categories = Category.query.all()
     if 'uid' in session and 'uname' in session:
         user = User.query.filter(User.id == session['uid']).first()
-        topics = Topic.query.filter(Topic.user_id == session['uid']).all()
+        topics = Topic.query.filter(Topic.user_id == session['uid']).order_by(text('pub_date desc')).all()
     return render_template('time.html', params=locals())
 
 # 列表
@@ -348,7 +363,7 @@ def photo():
     categories = Category.query.all()
     if 'uid' in session and 'uname' in session:
         user = User.query.filter(User.id == session['uid']).first()
-    topics = Topic.query.filter(Topic.images != "").all()
+    topics = Topic.query.filter(Topic.images != "", Topic.user_id == user.id).all()
     print('topics', topics)
     return render_template('photo.html', params=locals())
 
@@ -356,4 +371,6 @@ def photo():
 @main.route('/about')
 def about():
     categories = Category.query.all()
+    if 'uid' in session and 'uname' in session:
+        user = User.query.filter(User.id == session['uid']).first()
     return render_template('about.html', params=locals())

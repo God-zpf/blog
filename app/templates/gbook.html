@@ -93,11 +93,12 @@
 						Address: <a href="#" rel="bookmark" title="住在手机里的朋友">18837636</a>
 					</div>
 					<div class="commentstitle">
-						<h3 id="comments">到现在<span class="commentsnumber">有{{ params.replies | length }}条留言</span></h3>
+						<h3 id="comments">到现在<span class="commentsnumber">有{{ params.reply_num }}条留言</span></h3>
 					</div>
-                    {% for reply in params.replies %}
+                    {% for topic in params.topics %}
 					<ol class="commentlist">
 						<!--先遍历父级评论-->
+                        {% for reply in topic.replies %}
 						<li>
 							<div class="top">
 								<a href='#' class='url'>{{ reply.user.uname }}</a>
@@ -128,6 +129,7 @@
 							</div>
 						</li>
                              {% endfor %}
+                            {% endfor %}
 					</ol>
                     {% endfor %}
 
