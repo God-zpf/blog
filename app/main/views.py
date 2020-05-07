@@ -329,7 +329,7 @@ def gbook():
     topics = Topic.query.filter(Topic.user_id == session['uid']).all()
     reply_num = 0
     for topic in topics:
-        for reply in topic.replies.all():
+        for reply in topic.replies.order_by(text('reply_time desc')).all():
             if reply.topic.user_id == user.id:
                 reply_num = reply_num + 1
     print('reply_num', reply_num)
@@ -363,7 +363,7 @@ def photo():
     categories = Category.query.all()
     if 'uid' in session and 'uname' in session:
         user = User.query.filter(User.id == session['uid']).first()
-    topics = Topic.query.filter(Topic.images != "", Topic.user_id == user.id).all()
+    topics = Topic.query.filter(Topic.images != "", Topic.user_id == user.id).order_by(text('pub_date desc')).all()
     print('topics', topics)
     return render_template('photo.html', params=locals())
 

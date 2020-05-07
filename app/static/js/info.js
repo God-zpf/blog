@@ -22,6 +22,7 @@ $(function() {
             success: function (data) {
                 console.log(data);
                 $('#diggnum').text(data.num);
+                $('.like').text(data.num);
             }
         })
     })
